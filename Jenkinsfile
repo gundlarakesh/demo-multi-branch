@@ -12,7 +12,7 @@ pipeline {
                 checkout scm
             }
         }
-      stage{'Run'}{
+      stage('Run'){
         steps{
           bat 'python main.py'
         }
