@@ -43,13 +43,13 @@ pipeline {
           script{
               emailext(
                   subject: "✅ Build Successful: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                  mimeType: 'text/html',
                   body: """
                   Hi <strong>${authorName}</strong>,<br><br>
                   The job <strong>${env.JOB_NAME}</strong> (Build #${env.BUILD_NUMBER}) has <strong>succeeded</strong>.<br>
                   <a href="${env.BUILD_URL}">Click here</a> to view the console output.<br><br>
                   Regards,<br>Jenkins
                   """,
+                  mimeType: 'text/html',
                   to: authorEmail
             )
         }
@@ -59,13 +59,13 @@ pipeline {
           script {
             emailext(
                 subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                mimeType: 'text/html',
                 body: """
                 Hi <strong>${authorName}</strong>,<br><br>
                 The job <strong>${env.JOB_NAME}</strong> (Build #${env.BUILD_NUMBER}) has <strong>failed</strong>.<br>
                 <a href="${env.BUILD_URL}">Click here</a> to view the console output.<br><br>
                 Regards,<br>Jenkins
                 """,
+                mimeType: 'text/html',
                 to: authorEmail
             )
         }
