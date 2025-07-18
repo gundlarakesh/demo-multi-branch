@@ -1,6 +1,6 @@
 def authorName = ''
 def authorEmail = ''
-def OwnerEmail = 'rakeshgundla68@gmail.com'
+def ownerEmail = 'rakeshgundla68@gmail.com'
 
 pipeline {
     agent any
@@ -53,7 +53,7 @@ pipeline {
                             <p><a href="${env.BUILD_URL}console">Click here</a> to check full log</p>
                             """,
                     mimeType: 'text/html',
-                    to: "${authorEmail}, ${env.OwnerEmail}"
+                    to: "${authorEmail}, ${ownerEmail}"
                 )
             }
         }
@@ -71,7 +71,7 @@ pipeline {
                             <p><a href="${env.BUILD_URL}console">Click here</a> to check full log</p>
                             """,
                     mimeType: 'text/html',
-                    to: "${authorEmail}, ${env.OwnerEmail}"
+                    to: "${authorEmail}, ${ownerEmail}"
                 )
             }
         }
