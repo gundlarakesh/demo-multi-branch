@@ -40,35 +40,39 @@ pipeline {
         }
 
         success {
-          script{
-              emailext(
-                  subject: "✅ Build Successful: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                  body: """
-                  Hi <strong>${authorName}</strong>,<br><br>
-                  The job <strong>${env.JOB_NAME}</strong> (Build #${env.BUILD_NUMBER}) has <strong>succeeded</strong>.<br>
-                  <a href="${env.BUILD_URL}">Click here</a> to view the console output.<br><br>
-                  Regards,<br>Jenkins
-                  """,
-                  mimeType: 'text/html',
-                  to: authorEmail
-            )
-        }
+          script {
+                def log = currentBuild.rawBuild.getLog(50).join('\n')
+
+                emailext (
+                    subject: "✅ SUCCESS: Job ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                    body: """<p>Hi <strong>${authorName}</strong>,</p>
+                            <p>✅ Build Succeeded for <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b>.</p>
+                            <p>Console Output (last 50 lines):</p>
+                            <pre>${log}</pre>
+                            <p><a href="${env.BUILD_URL}console">Click here</a> to check full log</p>
+                            """,
+                    mimeType: 'text/html',
+                    to: authorEmail
+                )
+            }
         }
 
         failure {
           script {
-            emailext(
-                subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-                Hi <strong>${authorName}</strong>,<br><br>
-                The job <strong>${env.JOB_NAME}</strong> (Build #${env.BUILD_NUMBER}) has <strong>failed</strong>.<br>
-                <a href="${env.BUILD_URL}">Click here</a> to view the console output.<br><br>
-                Regards,<br>Jenkins
-                """,
-                mimeType: 'text/html',
-                to: authorEmail
-            )
-        }
+                def log = currentBuild.rawBuild.getLog(50).join('\n')
+
+                emailext (
+                    subject: "❌ FAILURE: Job ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                    body: """<p>Hi <strong>${authorName}</strong>,</p>
+                            <p>❌ Build failed for <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b>.</p>
+                            <p>Console Output (last 50 lines):</p>
+                            <pre>${log}</pre>
+                            <p><a href="${env.BUILD_URL}console">Click here</a> to check full log</p>
+                            """,
+                    mimeType: 'text/html',
+                    to: authorEmail
+                )
+            }
         }
     }
 }
