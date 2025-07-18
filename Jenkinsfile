@@ -1,68 +1,68 @@
+@Field def authorName = ''
+@Field def authorEmail = ''
+
 pipeline {
     agent any
-    options{
-      skipDefaultCheckout()
-      timestamps()
-    }
-
-    environment {
-        AUTHOR_NAME = ''
-        AUTHOR_EMAIL = ''
+    options {
+        skipDefaultCheckout()
+        timestamps()
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from the repository
                 checkout scm
             }
         }
+
         stage('Show Commit Author') {
             steps {
                 script {
-                    env.AUTHOR_NAME = bat(script: '@echo off & "C:\\Djangoprojects\\git\\cmd\\git.exe" log -1 --pretty=format:"%%an"', returnStdout: true).trim()
-                    env.AUTHOR_EMAIL = bat(script: '@echo off & "C:\\Djangoprojects\\git\\cmd\\git.exe" log -1 --pretty=format:"%%ae"', returnStdout: true).trim()
+                    authorName = bat(script: '@echo off & "C:\\Djangoprojects\\git\\cmd\\git.exe" log -1 --pretty=format:"%%an"', returnStdout: true).trim()
+                    authorEmail = bat(script: '@echo off & "C:\\Djangoprojects\\git\\cmd\\git.exe" log -1 --pretty=format:"%%ae"', returnStdout: true).trim()
 
-                    echo "Author Name: ${env.AUTHOR_NAME}"
-                    echo "Author Email: ${env.AUTHOR_EMAIL}"
+                    echo "Author Name: ${authorName}"
+                    echo "Author Email: ${authorEmail}"
                 }
             }
         }
-      stage('Run'){
-        steps{
-          bat 'python main.py'
+
+        stage('Run') {
+            steps {
+                bat 'python main.py'
+            }
         }
-      }
     }
 
     post {
         always {
             echo 'This will always run'
         }
+
         success {
-            // send email notification to the author
             emailext(
-                subject: "Build Successful",
+                subject: "✅ Build Successful: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
-                Hi <strong>${env.AUTHOR_NAME}</strong>,
-                <p>The ${env.JOB_NAME} with build number ${env.BUILD_NUMBER} has <strong>succeeded.</strong></p>
-                <p>Check the console output at <a href="${env.BUILD_URL}">this link</a>.</p>
+                Hi <strong>${authorName}</strong>,<br><br>
+                The job <strong>${env.JOB_NAME}</strong> (Build #${env.BUILD_NUMBER}) has <strong>succeeded</strong>.<br>
+                <a href="${env.BUILD_URL}">Click here</a> to view the console output.<br><br>
+                Regards,<br>Jenkins
                 """,
-                to: env.AUTHOR_EMAIL
+                to: authorEmail
             )
         }
+
         failure {
-          // include the build information in the email
             emailext(
-                subject: "Build Failed",
+                subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
-                Hi <strong>${env.AUTHOR_NAME}</strong>,
-                <p>The ${env.JOB_NAME} with build number ${env.BUILD_NUMBER} has <strong>failed.</strong></p>
-                <p>Check the console output at <a href="${env.BUILD_URL}">this link</a>.</p>
+                Hi <strong>${authorName}</strong>,<br><br>
+                The job <strong>${env.JOB_NAME}</strong> (Build #${env.BUILD_NUMBER}) has <strong>failed</strong>.<br>
+                <a href="${env.BUILD_URL}">Click here</a> to view the console output.<br><br>
+                Regards,<br>Jenkins
                 """,
-                to: env.AUTHOR_EMAIL
+                to: authorEmail
             )
         }
     }
 }
-
