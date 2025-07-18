@@ -12,6 +12,16 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Show Commit Author') {
+            steps {
+                script {
+                    def authorName = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                    def authorEmail = sh(script: "git log -1 --pretty=format:'%ae'", returnStdout: true).trim()
+                    echo "Author Name: ${authorName}"
+                    echo "Author Email: ${authorEmail}"
+                }
+            }
+        }
       stage('Run'){
         steps{
           bat 'python main.py'
@@ -19,3 +29,4 @@ pipeline {
       }
     }
 }
+
