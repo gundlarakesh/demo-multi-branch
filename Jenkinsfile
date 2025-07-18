@@ -53,7 +53,8 @@ pipeline {
                             <p><a href="${env.BUILD_URL}console">Click here</a> to check full log</p>
                             """,
                     mimeType: 'text/html',
-                    to: "${authorEmail}, ${ownerEmail}"
+                    to: "${authorEmail}",
+                    cc: "${ownerEmail}"
                 )
             }
         }
@@ -71,7 +72,8 @@ pipeline {
                             <p><a href="${env.BUILD_URL}console">Click here</a> to check full log</p>
                             """,
                     mimeType: 'text/html',
-                    to: "${authorEmail}, ${ownerEmail}"
+                    to: "${authorEmail}",
+                    cc: "${ownerEmail}"
                 )
             }
         }
